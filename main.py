@@ -77,29 +77,26 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_UP] :
+            self.rect.move_ip(0,-self.vel)
             if not (pygame.sprite.spritecollide(self,venue_spritegroup,False) or pygame.sprite.spritecollide(self,horizontal_connectors_spritegroup,False) \
                or pygame.sprite.spritecollide(self,vertical_connectors_spitegroup,False)):
                 self.rect.move_ip(0,30)
-            else:
-                self.rect.move_ip(0,-self.vel)
         elif keys[pygame.K_DOWN]:
+            self.rect.move_ip(0, self.vel)
             if not (pygame.sprite.spritecollide(self, venue_spritegroup, False) or pygame.sprite.spritecollide(self,horizontal_connectors_spritegroup,False) \
                     or pygame.sprite.spritecollide(self, vertical_connectors_spitegroup, False)):
                 self.rect.move_ip(0,-30)
-            else:
-                self.rect.move_ip(0, self.vel)
         elif keys[pygame.K_RIGHT]:
+            self.rect.move_ip(self.vel, 0)
             if not (pygame.sprite.spritecollide(self, venue_spritegroup, False) or pygame.sprite.spritecollide(self,horizontal_connectors_spritegroup,False) \
                     or pygame.sprite.spritecollide(self, vertical_connectors_spitegroup, False)):
                 self.rect.move_ip(-30,0)
-            else:
-                self.rect.move_ip(self.vel,0)
         elif keys[pygame.K_LEFT]:
+            self.rect.move_ip(-self.vel, 0)
             if not (pygame.sprite.spritecollide(self, venue_spritegroup, False) or pygame.sprite.spritecollide(self,horizontal_connectors_spritegroup,False) \
                     or pygame.sprite.spritecollide(self, vertical_connectors_spitegroup, False)):
                 self.rect.move_ip(30,0)
-            else:
-                self.rect.move_ip(-self.vel,0)
+
 
 player_spritegroup = pygame.sprite.Group()
 player_spritegroup.add(Player((390,360)))
