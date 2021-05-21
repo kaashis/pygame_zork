@@ -12,6 +12,8 @@ pygame.display.set_icon(icon)
 FPS = 30
 FramePerSec = pygame.time.Clock()
 font = pygame.font.SysFont('Arial', 30)
+end_font = pygame.font.SysFont('Arial', 175)
+game_over = False
 
 canvas = pygame.display.set_mode((1200, 700))
 
@@ -22,7 +24,7 @@ class Venue(pygame.sprite.Sprite):
         self.image = pygame.Surface((200, 100))
         self.rect = pygame.draw.rect(self.image,(0,255,0),(0,0,200,100),25)
         self.rect = self.rect.move(location)
-        self.mask = pygame.mask.from_surface(self.image)
+
 
 class Horizontal_Connectors(pygame.sprite.Sprite):
     def __init__(self, location):
@@ -31,7 +33,7 @@ class Horizontal_Connectors(pygame.sprite.Sprite):
         self.image.fill(pygame.color.Color('green'))
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(location)
-        self.mask = pygame.mask.from_surface(self.image)
+
 
 class Vertical_Connectors(pygame.sprite.Sprite):
     def __init__(self, location):
@@ -40,7 +42,7 @@ class Vertical_Connectors(pygame.sprite.Sprite):
         self.image.fill(pygame.color.Color('green'))
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(location)
-        self.mask = pygame.mask.from_surface(self.image)
+
 
 venue_spritegroup = pygame.sprite.Group()
 venue_spritegroup.add(Venue((610, 100)))
@@ -76,12 +78,12 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.circle(self.image,pygame.Color('red'),(15,15),15)
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(location)
-        self.mask = pygame.mask.from_surface(self.image)
+
 
         self.vel=8
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP] :
+        if keys[pygame.K_UP]:
             self.rect.move_ip(0,-self.vel)
             if not (pygame.sprite.spritecollide(self,venue_spritegroup,False) or pygame.sprite.spritecollide(self,horizontal_connectors_spritegroup,False) \
                or pygame.sprite.spritecollide(self,vertical_connectors_spitegroup,False)):
@@ -106,6 +108,30 @@ class Player(pygame.sprite.Sprite):
 player_spritegroup = pygame.sprite.Group()
 player_spritegroup.add(Player((390,360)))
 
+class Monster(pygame.sprite.Sprite):
+    def __init__(self, location):
+        super().__init__()
+        self.image = pygame.Surface((30, 30),pygame.SRCALPHA)
+        pygame.draw.circle(self.image,pygame.Color('brown'),(15,15),15)
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(location)
+
+
+        self.vel=5
+    def update(self):
+        self.rect.move_ip(self.vel,0)
+        global game_over
+        if not pygame.sprite.spritecollide(self, venue_spritegroup, False):
+            self.vel=-self.vel
+        elif (pygame.sprite.spritecollide(self, player_spritegroup, True)):
+            game_over = True
+
+        if game_over:
+            canvas.blit(end_font.render("GAME OVER", False, (255, 255, 255)), (40, 325))
+
+monster_spritegroup = pygame.sprite.Group()
+monster_spritegroup.add(Monster((390, 530)))
+
 # Game Loop -displays the screen
 while True:
     canvas.fill((0,0,0))
@@ -118,6 +144,8 @@ while True:
     vertical_connectors_spitegroup.draw(canvas)
     name_the_place()
     player_spritegroup.draw(canvas)
-    pygame.display.update()
+    monster_spritegroup.draw(canvas)
     player_spritegroup.update()
+    monster_spritegroup.update()
+    pygame.display.update()
     FramePerSec.tick(FPS)
