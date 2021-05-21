@@ -4,6 +4,11 @@ import pygame
 
 pygame.init()
 
+# Title and Icon
+pygame.display.set_caption("RPG-Zork")
+icon = pygame.image.load('game_image.png')
+pygame.display.set_icon(icon)
+
 FPS = 30
 FramePerSec = pygame.time.Clock()
 font = pygame.font.SysFont('Arial', 30)
